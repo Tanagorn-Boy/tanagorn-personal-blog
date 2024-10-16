@@ -1,37 +1,24 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
-import "./App.css";
+function NavBar() {
+  return (
+    <nav className="flex justify-between items-center bg-white py-4 px-8  h-20 border-b">
+      <h1 className="text-2xl font-bold">hh.</h1>
+      <div className="hidden md:flex space-x-4">
+        <a href="#" className="border rounded-full px-10 py-2">
+          log in
+        </a>
+        <a href="#" className="text-white bg-[#26231E] rounded-full px-10 py-2">
+          Sign up
+        </a>
+      </div>
+      <button className="md:hidden">Menu</button>
+    </nav>
+  );
+}
 
 function App() {
-  const [count, setCount] = useState(0);
-
   return (
     <>
-      <section>
-        <h1>My First React App on Vite</h1>
-      </section>
-
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <NavBar />
     </>
   );
 }
