@@ -23,6 +23,7 @@ function HeroSection() {
           <h1 className="text-4xl lg:text-5xl font-bold mb-4">
             Stay <br />
             Informed,
+            Informed,
             <br />
             Stay Inspired
           </h1>
