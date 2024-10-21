@@ -1,4 +1,4 @@
-import { Linkedin, Github } from "lucide-react";
+import { Linkedin, Github ,Mail} from "lucide-react";
 
 export function NavBar() {
   return (
@@ -19,16 +19,17 @@ export function NavBar() {
 
 export function Footer() {
   return (
-    <footer className="container mx-auto px-4 py-8  bg-[#EFEEEB] ">
-      <div className="flex items-center lg:flex-row lg:justify-between">
-        <div className="flex">
-          <div className="flex ">Get in touch</div>
-          <div className="flex ml-5 space-x-5">
-            <Linkedin />
-            <Github />
-          </div>
+    <footer className=" bg-[#EFEEEB] flex flex-col py-4 sm:flex-row  justify-between  items-center">
+      <div className="flex flex-col sm:flex-row  space-y-4 sm:space-y-0 sm:space-x-6 px-4">
+        <span className="font-medium">Get in touch</span>
+        <div className="flex space-x-4">
+          <Linkedin />
+          <Github />
+          <Mail />
         </div>
-        <div className="underline">Home Page</div>
+      </div>
+      <div className="flex items-center px-4">
+        Home page
       </div>
     </footer>
   );
