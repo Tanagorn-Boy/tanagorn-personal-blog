@@ -1,4 +1,5 @@
 import { blogPosts } from "@/data/blogPosts";
+import { useState } from "react";
 import {
   Select,
   SelectContent,
@@ -48,30 +49,24 @@ function BlogCard({ image, category, title, description, author, date }) {
 
 export function ArticleSection() {
   const categories = ["Highlight", "Cat", "Inspiration", "General"];
+  const [category, setCategory] = useState("");
   return (
     <div className=" w-full max-w-7xl mx-auto md:px-6 lg:px-8 mb-10">
       <h2 className="text-xl font-bold mb-4 px-4">Latest articles</h2>
       <div className="bg-[#EFEEEB] px-4 py-4 md:py-3 md:rounded-sm flex flex-col space-y-4  md:space-y-0 md:justify-between">
         <div className="flex md:justify-between">
           <div className="hidden md:flex space-x-2">
+          {categories.map((cat) => (
             <button
-              className="px-4 py-3 transition-colors rounded-sm text-sm text-muted-foreground font-medium bg-[#DAD6D1]
-            "
+              key={cat}
+              onClick={() => setCategory(cat)}
+              className={`px-4 py-3 transition-colors rounded-sm text-sm text-muted-foreground font-medium ${
+                category === cat ? "bg-[#DAD6D1]" : "hover:bg-muted"
+              }`}
             >
-              Highlight
+              {cat}
             </button>
-
-            {categories.slice(1).map((cat) => {
-              return (
-                <button
-                  key={cat}
-                  className="px-4 py-3 transition-colors rounded-sm text-sm text-muted-foreground font-medium hover:bg-muted
-              "
-                >
-                  {cat}
-                </button>
-              );
-            })}
+          ))}
           </div>
 
           <div className="form-control w-full md:max-w-sm">
@@ -83,7 +78,7 @@ export function ArticleSection() {
           </div>
         </div>
         <div className="md:hidden w-full">
-          <Select value="Highlight">
+          <Select value={category} onValueChange={(value) => setCategory(value)}>
             <SelectTrigger className="w-full py-3 rounded-sm text-muted-foreground focus:ring-0 focus:ring-offset-0 focus:border-muted-foreground">
               <SelectValue placeholder="Select category" />
             </SelectTrigger>
