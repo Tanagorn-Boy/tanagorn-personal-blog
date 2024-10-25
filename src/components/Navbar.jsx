@@ -1,4 +1,5 @@
 import { Linkedin, Github ,Mail} from "lucide-react";
+import { Menu } from "lucide-react";
 
 export function NavBar() {
   return (
@@ -12,7 +13,7 @@ export function NavBar() {
           Sign up
         </a>
       </div>
-      <button className="md:hidden">Menu</button>
+      <button className="md:hidden"><Menu /></button>
     </nav>
   );
 }
@@ -31,6 +32,7 @@ export function Footer() {
       <div className="flex items-center px-4">
         Home page
       </div>
+      
     </footer>
   );
 }
