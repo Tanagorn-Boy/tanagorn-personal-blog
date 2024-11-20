@@ -1,4 +1,3 @@
-import { blogPosts } from "@/data/blogPosts";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import {
@@ -8,60 +7,29 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Search, Loader2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
-function BlogCard({ image, category, title, description, author, date }) {
-  return (
-    <div className="flex flex-col gap-4">
-      <a href="#" className="relative h-[212px] sm:h-[360px]">
-        <img
-          className="w-full h-full object-cover rounded-md"
-          src={image}
-          alt={title}
-        />
-      </a>
-      <div className="flex flex-col">
-        <div className="flex">
-          <span className="bg-green-200 rounded-full px-3 py-1 text-sm font-semibold text-green-600 mb-2">
-            {category}
-          </span>
-        </div>
-        <a href="#">
-          <h2 className="text-start font-bold text-xl mb-2 line-clamp-2 hover:underline">
-            {title}
-          </h2>
-        </a>
-        <p className="text-muted-foreground text-sm mb-4 flex-grow line-clamp-3">
-          {description}
-        </p>
-        <div className="flex items-center text-sm">
-          <img
-            className="w-8 h-8 rounded-full mr-2"
-            src="https://res.cloudinary.com/dcbpjtd1r/image/upload/v1728449784/my-blog-post/xgfy0xnvyemkklcqodkg.jpg"
-            alt={author}
-          />
-          <span>{author}</span>
-          <span className="mx-2 text-gray-300">|</span>
-          <span>{date}</span>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-export function ArticleSection() {
+export default function ArticleSection() {
   const categories = ["Highlight", "Cat", "Inspiration", "General"];
   const [category, setCategory] = useState("");
   const [posts, setPosts] = useState([]);
   const [page, setPage] = useState(1); // Current page state
   const [hasMore, setHasMore] = useState(true); // To track if there are more posts to load
   const [isLoading, setIsLoading] = useState(false);
+  const [searchKeyword, setSearchKeyword] = useState("");
+  const [suggestions, setSuggestions] = useState([]);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     setIsLoading(true); // Set isLoading to true when starting to fetch
     const fetchPosts = async () => {
       try {
         const response = await axios.get(
-          `https://blog-post-project-api.vercel.app/posts?page=${page}&limit=6&category=${category}`
+          `https://blog-post-project-api.vercel.app/posts?page=${page}&limit=6&${
+            category !== "Highlight" ? `&category=${category}` : ""
+          }`
         );
         setPosts((prevPosts) => [...prevPosts, ...response.data.posts]);
         setIsLoading(false); // Set isLoading to false after fetching
@@ -75,6 +43,27 @@ export function ArticleSection() {
     };
     fetchPosts(); // Call fetchPosts within useEffect
   }, [page, category]);
+
+  useEffect(() => {
+    if (searchKeyword.length > 0) {
+      setIsLoading(true);
+      const fetchSuggestions = async () => {
+        try {
+          const response = await axios.get(
+            `https://blog-post-project-api.vercel.app/posts?keyword=${searchKeyword}`
+          );
+          setSuggestions(response.data.posts); // Set search suggestions
+          setIsLoading(false);
+        } catch (error) {
+          console.log(error);
+          setIsLoading(false);
+        }
+      };
+      fetchSuggestions();
+    } else {
+      setSuggestions([]); // Clear suggestions if keyword is empty
+    }
+  }, [searchKeyword]);
 
   const handleLoadMore = () => {
     setPage((prevPage) => prevPage + 1); // Increment page number to load more posts
@@ -109,7 +98,30 @@ export function ArticleSection() {
               type="text"
               placeholder="Search"
               className="input input-bordered "
+              onChange={(e) => setSearchKeyword(e.target.value)}
+              onFocus={() => setShowDropdown(true)}
+              onBlur={() => {
+                setTimeout(() => {
+                  setShowDropdown(false);
+                }, 200);
+              }}
             />
+            {!isLoading &&
+              showDropdown &&
+              searchKeyword &&
+              suggestions.length > 0 && (
+                <div className="absolute z-10 w-full mt-2 bg-background rounded-sm shadow-lg p-1">
+                  {suggestions.map((suggestion, index) => (
+                    <button
+                      key={index}
+                      className="text-start px-4 py-2 block w-full text-sm text-foreground hover:bg-[#EFEEEB] hover:text-muted-foreground hover:rounded-sm cursor-pointer"
+                      onClick={() => navigate(`/post/${suggestion.id}`)}
+                    >
+                      {suggestion.title}
+                    </button>
+                  ))}
+                </div>
+              )}
           </div>
         </div>
         <div className="md:hidden w-full">
@@ -143,6 +155,7 @@ export function ArticleSection() {
           return (
             <BlogCard
               key={index}
+              id={blog.id}
               image={blog.image}
               category={blog.category}
               title={blog.title}
@@ -161,12 +174,65 @@ export function ArticleSection() {
         <div className="text-center mt-8">
           <button
             onClick={handleLoadMore}
-            className="hover:text-muted-foreground font-medium underline"
+            className={`font-medium ${
+              !isLoading ? "underline hover:text-muted-foreground" : ""
+            }`}
+            disabled={isLoading}
           >
-            {isLoading ? "Loading..." : "View more"}
+            {isLoading ? (
+              <div className="flex flex-col items-center min-h-lvh">
+                <Loader2 className="w-12 h-12 animate-spin text-foreground" />
+                <p className="mt-4">Loading...</p>
+              </div>
+            ) : (
+              "View more"
+            )}
           </button>
         </div>
       )}
+    </div>
+  );
+}
+
+function BlogCard({ id, image, category, title, description, author, date }) {
+  const navigate = useNavigate();
+  return (
+    <div className="flex flex-col gap-4">
+      <button
+        onClick={() => navigate(`/post/${id}`)}
+        className="relative h-[212px] sm:h-[360px]"
+      >
+        <img
+          className="w-full h-full object-cover rounded-md"
+          src={image}
+          alt={title}
+        />
+      </button>
+      <div className="flex flex-col">
+        <div className="flex">
+          <span className="bg-green-200 rounded-full px-3 py-1 text-sm font-semibold text-green-600 mb-2">
+            {category}
+          </span>
+        </div>
+        <button onClick={() => navigate(`/post/${id}`)}>
+          <h2 className="text-start font-bold text-xl mb-2 line-clamp-2 hover:underline">
+            {title}
+          </h2>
+        </button>
+        <p className="text-muted-foreground text-sm mb-4 flex-grow line-clamp-3">
+          {description}
+        </p>
+        <div className="flex items-center text-sm">
+          <img
+            className="w-8 h-8 rounded-full mr-2"
+            src="https://res.cloudinary.com/dcbpjtd1r/image/upload/v1728449784/my-blog-post/xgfy0xnvyemkklcqodkg.jpg"
+            alt={author}
+          />
+          <span>{author}</span>
+          <span className="mx-2 text-gray-300">|</span>
+          <span>{date}</span>
+        </div>
+      </div>
     </div>
   );
 }

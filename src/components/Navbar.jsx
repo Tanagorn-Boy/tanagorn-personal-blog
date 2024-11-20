@@ -1,19 +1,29 @@
-import { Linkedin, Github ,Mail} from "lucide-react";
+import { Linkedin, Github, Mail } from "lucide-react";
 import { Menu } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export function NavBar() {
+  const navigate = useNavigate();
   return (
     <nav className="flex justify-between items-center bg-white py-4 px-8  h-20 border-b">
       <h1 className="text-2xl font-bold">hh.</h1>
       <div className="hidden md:flex space-x-4">
-        <a href="#" className="border rounded-full px-10 py-2">
+        <button
+          onClick={() => navigate("/login")}
+          className="border rounded-full px-10 py-2"
+        >
           log in
-        </a>
-        <a href="#" className="text-white bg-[#26231E] rounded-full px-10 py-2">
+        </button>
+        <button
+          onClick={() => navigate("/signup")}
+          className="text-white bg-[#26231E] rounded-full px-10 py-2"
+        >
           Sign up
-        </a>
+        </button>
       </div>
-      <button className="md:hidden"><Menu /></button>
+      <button className="md:hidden">
+        <Menu />
+      </button>
     </nav>
   );
 }
@@ -29,10 +39,7 @@ export function Footer() {
           <Mail />
         </div>
       </div>
-      <div className="flex items-center px-4">
-        Home page
-      </div>
-      
+      <div className="flex items-center px-4">Home page</div>
     </footer>
   );
 }
